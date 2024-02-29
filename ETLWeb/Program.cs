@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<DefaultContext>(options => options.UseNpgsql(connection));
+builder.Services.AddDbContext<DefaultContext>(options => options.UseNpgsql(connection, b => b.MigrationsAssembly("ETLWeb")));
 builder.Services.AddTransient<IRepositoryBase, RepositoryBase>();
 builder.Services.AddTransient<IUploadService, UploadService>();
 

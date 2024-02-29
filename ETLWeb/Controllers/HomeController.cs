@@ -5,6 +5,7 @@ using ETLWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ETLWeb.Controllers
 {
@@ -12,7 +13,7 @@ namespace ETLWeb.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DbContext _contex;
-        private IUploadService  _uploadService;
+        private IUploadService _uploadService;
         private readonly IRepositoryBase _repositoryBase;
 
         public HomeController(ILogger<HomeController> logger, DefaultContext dbContext, IUploadService uploadService,
@@ -44,12 +45,24 @@ namespace ETLWeb.Controllers
         {
             Uri uri = new Uri("http://universities.hipolabs.com/search");
             Dictionary<string, string> parameters = new Dictionary<string, string>() { { "country", "Russian Federation" } };
-            var data = await _uploadService.GetDataFromAPI<Universitet>(uri,parameters);
+            var data = await _uploadService.GetDataFromAPI<Universitet>(uri, parameters);
+            await foreach (var item in data)
+            {
+                _repositoryBase.Add(item);
+            }
 
-            _repositoryBase.AddRange(data);
-
+            await _repositoryBase.SaveChangesAsync();
 
             return new OkObjectResult(data);
         }
+
+
+        //public async Task<IActionResult> Test()
+        //{
+        //    var test =
+
+
+        //    return new OkResult();
+        //}
     }
 }

@@ -21,10 +21,11 @@ namespace DAO
             _context.AddAsync(entity);
         }
 
-        public void AddRange<T>(IEnumerable<T> entities) where T : class
+        public async Task AddRange<T>(IEnumerable<T> entities) where T : class
         {
-            _context.AddRangeAsync(entities);
+            await _context.AddRangeAsync(entities);
         }
+
 
         public void Delete<T>(T entity) where T : class
         {
